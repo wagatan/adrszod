@@ -3,7 +3,6 @@ import smbus
 import time
 i2c = smbus.SMBus(1)
 addr=0x68
-
 Vref=2.048
 
 def swap16(x):
@@ -13,36 +12,13 @@ def swap16(x):
 def sign16(x):
     return ( -(x & 0b1000000000000000) |
         (x & 0b0111111111111111) )
-i2c.write_byte(addr, 0b10011000) #16bit
 
-time.sleep(0.2)
-data = i2c.read_word_data(addr,0x00)
-raw = swap16(int(hex(data),16))
-raw_s = sign16(int(hex(raw),16))
-volts1 = round((Vref * raw_s / 32767),5)
+while True:
+    i2c.write_byte(addr, 0b10011000) #16bit
+    time.sleep(0.2)
+    data = i2c.read_word_data(addr,0x00)
+    raw = swap16(int(hex(data),16))
+    raw_s = sign16(int(hex(raw),16))
+    volts1 = round((Vref * raw_s / 32767),5)
 
-i2c.write_byte(addr, 0b10111000) #16bit
-time.sleep(0.2)
-
-data = i2c.read_word_data(addr,0x00)
-raw = swap16(int(hex(data),16))
-raw_s = sign16(int(hex(raw),16))
-volts2 = round((Vref * raw_s / 32767),5)
-
-i2c.write_byte(addr, 0b11011000) #16bit
-time.sleep(0.2)
-
-data = i2c.read_word_data(addr,0x00)
-raw = swap16(int(hex(data),16))
-raw_s = sign16(int(hex(raw),16))
-volts3 = round((Vref * raw_s / 32767),5)
-
-i2c.write_byte(addr, 0b11111000) #16bit
-time.sleep(0.2)
-
-data = i2c.read_word_data(addr,0x00)
-raw = swap16(int(hex(data),16))
-raw_s = sign16(int(hex(raw),16))
-volts4 = round((Vref * raw_s / 32767),5)
-
-print ("ch1=" + str(volts1) +"V")
+    print ("ch1=" + str(volts1) +"V")
